@@ -11,7 +11,13 @@ use crate::error::Result;
 pub struct Cli {
     #[arg(short, long, global = true, help = "Suppress all output")]
     quiet: bool,
-    #[arg(short, long, global = true, help = "Enable verbose output", conflicts_with = "quiet")]
+    #[arg(
+        short,
+        long,
+        global = true,
+        help = "Enable verbose output",
+        conflicts_with = "quiet"
+    )]
     verbose: bool,
     #[command(subcommand)]
     command: CliCommand,
