@@ -11,7 +11,7 @@ use crate::error::Result;
 pub struct Cli {
     #[arg(short, long, global = true, help = "Suppress all output")]
     quiet: bool,
-    #[arg(short, long, global = true, help = "Enable verbose output")]
+    #[arg(short, long, global = true, help = "Enable verbose output", conflicts_with = "quiet")]
     verbose: bool,
     #[command(subcommand)]
     command: CliCommand,
@@ -116,5 +116,10 @@ mod tests {
     fn parse_verbose_short_flag() {
         let cli = Cli::try_parse_from(["dot", "-v", "sync"]).unwrap();
         assert!(cli.verbose);
+    }
+
+    #[test]
+    fn quiet_and_verbose_are_mutually_exclusive() {
+        assert!(Cli::try_parse_from(["dot", "--quiet", "--verbose", "sync"]).is_err());
     }
 }
