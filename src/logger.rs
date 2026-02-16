@@ -17,22 +17,18 @@ impl Log for CliLogger {
         match record.level() {
             Level::Error => eprintln!(
                 "{} {}",
-                "x".if_supports_color(Stderr, |t| t.style(Style::new().red().bold())),
+                "error:".if_supports_color(Stderr, |t| t.style(Style::new().red().bold())),
                 record.args()
             ),
             Level::Warn => eprintln!(
                 "{} {}",
-                "!".if_supports_color(Stderr, |t| t.style(Style::new().yellow().bold())),
+                "warning:".if_supports_color(Stderr, |t| t.style(Style::new().yellow().bold())),
                 record.args()
             ),
-            Level::Info => println!(
-                "{} {}",
-                "+".if_supports_color(Stdout, |t| t.style(Style::new().green().bold())),
-                record.args()
-            ),
+            Level::Info => println!("{}", record.args()),
             Level::Debug | Level::Trace => println!(
                 "{} {}",
-                "~".if_supports_color(Stdout, |t| t.style(Style::new().dimmed())),
+                "debug:".if_supports_color(Stdout, |t| t.style(Style::new().dimmed())),
                 record.args()
             ),
         }
