@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
+use log::LevelFilter;
 
 use crate::commands::{AddCommand, Command, InitCommand, RemoveCommand, SyncCommand};
 use crate::error::Result;
@@ -8,6 +9,16 @@ use crate::error::Result;
 #[derive(Parser)]
 #[command(version, about = "A simple dotfiles manager")]
 pub struct Cli {
+    #[arg(short, long, global = true, help = "Suppress all output")]
+    quiet: bool,
+    #[arg(
+        short,
+        long,
+        global = true,
+        help = "Enable verbose output",
+        conflicts_with = "quiet"
+    )]
+    verbose: bool,
     #[command(subcommand)]
     command: CliCommand,
 }
@@ -26,6 +37,15 @@ enum CliCommand {
 
 pub fn run() -> Result<()> {
     let cli = Cli::parse();
+
+    let level = if cli.quiet {
+        LevelFilter::Off
+    } else if cli.verbose {
+        LevelFilter::Debug
+    } else {
+        LevelFilter::Info
+    };
+    crate::logger::init(level);
 
     match cli.command {
         CliCommand::Init => InitCommand::new().execute(),
@@ -76,5 +96,36 @@ mod tests {
     #[test]
     fn add_requires_path() {
         assert!(Cli::try_parse_from(["dot", "add"]).is_err());
+    }
+
+    #[test]
+    fn parse_quiet_flag() {
+        let cli = Cli::try_parse_from(["dot", "--quiet", "sync"]).unwrap();
+        assert!(cli.quiet);
+        assert!(!cli.verbose);
+    }
+
+    #[test]
+    fn parse_verbose_flag() {
+        let cli = Cli::try_parse_from(["dot", "--verbose", "sync"]).unwrap();
+        assert!(cli.verbose);
+        assert!(!cli.quiet);
+    }
+
+    #[test]
+    fn parse_quiet_short_flag() {
+        let cli = Cli::try_parse_from(["dot", "-q", "sync"]).unwrap();
+        assert!(cli.quiet);
+    }
+
+    #[test]
+    fn parse_verbose_short_flag() {
+        let cli = Cli::try_parse_from(["dot", "-v", "sync"]).unwrap();
+        assert!(cli.verbose);
+    }
+
+    #[test]
+    fn quiet_and_verbose_are_mutually_exclusive() {
+        assert!(Cli::try_parse_from(["dot", "--quiet", "--verbose", "sync"]).is_err());
     }
 }
