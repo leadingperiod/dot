@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2026-02-17
+
+### Features
+
+- Improve logging with custom logger ([#50](https://github.com/leadingperiod/dot/pull/50)) ([422d272](https://github.com/rvillegasm/dot/commit/422d272de8cf0db175e645e77b4537c29982e127))
+
+
 ## [1.1.1] - 2026-02-14
 
 
