@@ -23,7 +23,7 @@ dirs = "6.0.0"
 log = "0.4"
 owo-colors = { version = "4", features = ["supports-colors"] }
 thiserror = "2.0.12"
-toml = "1.0.1"
+toml = "1.0.3"
 
 [dev-dependencies]
 tempfile = "3"
